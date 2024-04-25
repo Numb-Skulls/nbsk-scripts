@@ -1,0 +1,26 @@
+# cats this file for reference
+alias k-help='cat ~/.kube-alias |grep alias'
+# shortens kubectl to just k
+alias k='kubectl'
+# removes the dash
+alias kubectx="kubectl-ctx"
+# changes your environment to dev/qa. Point this to your config file location.
+alias export_devqa='export KUBECONFIG=$HOME/.kube/config && kubectx'
+# changes your environment to PHL - Primary Data Center. Point this to your config file location.
+alias export_pdc='export KUBECONFIG=$HOME/.kube/pdc/config && kubectx'
+# changes your environment to PIT - Backup Data Center. Point this to your config file location.
+alias export_bdc='export KUBECONFIG=$HOME/.kube/bdc/config && kubectx'
+# shows the External emissary port
+alias k-em='kubectl get svc -n emissary'
+# launches a node shell in the current node your in
+alias k-node-shell='kubectl node-shell'
+# shows list of nodes
+alias k-gn='kubectl get nodes'
+# shows list of nodes including Ip's
+alias k-gn-w='kubectl get nodes -o wide'
+# shows list of pods
+alias k-gp='kubectl get pods'
+# shows list of pods including Ip's
+alias k-gp-w='kubectl get pods -o wide'
+# brings up a list of namespaces for you to choose from
+alias k-ns='kubens' 
