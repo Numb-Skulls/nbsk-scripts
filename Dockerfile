@@ -9,7 +9,7 @@ RUN echo 'export PATH=/usr/local/bin:$PATH' >> /root/.bashrc
 RUN echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> /root/.bashrc
 RUN echo 'export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH' >> /root/.bashrc
 RUN echo 'source /root/.kube-alias' >> /root/.bashrc
-RUN apt update -y && apt install -y wget curl git tar build-essential file ruby-full locales golang-go sudo --no-install-recommends
+RUN apt update -y && apt install -y wget curl git tar build-essential file ruby-full locales golang-go sudo gcc --no-install-recommends
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 RUN useradd -m -s /bin/bash linuxbrew \
     && echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -17,7 +17,6 @@ USER linuxbrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 USER root
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
-RUN brew install gcc
 RUN brew install kube-linter
 RUN brew install kompose
 RUN brew install kubecolor
@@ -40,6 +39,10 @@ RUN curl -LO https://dl.k8s.io/release/$KUBE_VERSION/bin/linux/amd64/kubectl
 RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 RUN ( set -x; cd "$(mktemp -d)" && OS="$(uname | tr '[:upper:]' '[:lower:]')" && ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && KREW="krew-${OS}_${ARCH}" && curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && tar zxvf "${KREW}.tar.gz" && ./"${KREW}" install krew)
 RUN curl -sSLo helm.tar.gz "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" && tar -xzf helm.tar.gz && install ./linux-amd64/helm /usr/local/bin/helm
+RUN cd /root && wget https://raw.githubusercontent.com/Numb-Skulls/nbsk-scripts/main/.kube-alias
+RUN apt purge git build-essential file locales golang-go gcc -y
+RUN apt autoremove -y
+RUN rm -rf /root/go
 USER root
 WORKDIR /root
 CMD ["/bin/bash"]
